@@ -18,6 +18,7 @@ src/
 ```
 
 Rules:
+
 - A feature owns its components, types and API calls.
 - `shared/` never imports from `modules/`.
 - A feature does not import from another feature's internals.
@@ -29,6 +30,7 @@ Keep `BASE_URL` only in `src/shared/api/client.ts`. The API uses its own names
 (`title`, `price_cents`, `in_stock`); convert them once in a mapper (`toProduct`).
 
 ## Conventions
+
 - TypeScript, function components, typed props via `interface`.
 - Lists use `key={item.id}`, never the index.
 - Commands: `npm run dev`, `npm run build`, `npm run lint`.
