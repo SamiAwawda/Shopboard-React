@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "typecheck": "tsc -b",
+    "lint": "oxlint --deny-warnings",
     "preview": "vite preview",
     "prepare": "husky",
     "format": "prettier --write .",
@@ -31,7 +32,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "oxlint --fix",
+      "oxlint --fix --deny-warnings",
       "prettier --write"
     ],
     "*.{html,css,md,json}": [
