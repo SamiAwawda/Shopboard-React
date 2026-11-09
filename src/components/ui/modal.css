@@ -1,0 +1,52 @@
+/* Modal: the native <dialog> popup (used by the cart). */
+.modal {
+  width: min(540px, calc(100vw - 24px));
+  max-height: min(86svh, 850px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-modal);
+}
+
+.modal::backdrop {
+  background: var(--overlay);
+  backdrop-filter: blur(9px);
+}
+
+.modal-content {
+  padding: 23px 20px;
+}
+
+.modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.modal-heading h2 {
+  margin-top: 6px;
+  font-size: 23px;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: -0.8px;
+}
+
+.close-button {
+  margin: -4px -8px 0 0;
+  background: var(--surface-cool);
+  color: var(--ink-muted);
+}
+
+@media (min-width: 481px) {
+  .modal-content {
+    padding: 32px;
+  }
+
+  .modal-heading h2 {
+    font-size: clamp(23px, 3vw, 30px);
+  }
+}

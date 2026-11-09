@@ -1,0 +1,27 @@
+/* Footer: two small captions at the ends of one line. */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 18px auto 0;
+  padding: 0 5px 18px;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--caption-ink);
+}
+
+.footer span:first-child {
+  font-weight: 650;
+}
+
+@media (min-width: 761px) {
+  .footer {
+    margin-top: 22px;
+    padding: 0 var(--section-pad) 22px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+  }
+}
