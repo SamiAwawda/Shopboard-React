@@ -5,7 +5,6 @@ import HeroFooter from "./HeroFooter";
 import ProductStage from "./ProductStage";
 import ThumbnailSelector from "./ThumbnailSelector";
 import { pageOf, wrapIndex } from "./logic";
-import { NEIGHBOUR_OFFSETS } from "./data";
 import type { HeroProduct, Selection } from "./types";
 import "./hero.css";
 
@@ -73,13 +72,13 @@ function Carousel<T extends HeroProduct>({
     [total],
   );
 
-  // Arrow keys change the product, unless the user is typing or a popup is open.
+  // Arrow keys change the product, unless the user is typing.
   useEffect(() => {
     function handleKey(event: KeyboardEvent): void {
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
       if (event.altKey || event.ctrlKey || event.metaKey || target.isContentEditable) return;
-      if (/INPUT|TEXTAREA|SELECT/.test(target.tagName) || target.closest("dialog")) return;
+      if (/INPUT|TEXTAREA|SELECT/.test(target.tagName)) return;
       if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
       event.preventDefault();
       step(event.key === "ArrowRight" ? 1 : -1);
@@ -87,14 +86,6 @@ function Carousel<T extends HeroProduct>({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [step]);
-
-  // Loads the next and previous big photos early so the slide has no blank moment.
-  useEffect(() => {
-    for (const offset of NEIGHBOUR_OFFSETS) {
-      const neighbour = products[wrapIndex(selection.index + offset, total)];
-      if (neighbour) new Image().src = neighbour.heroImage;
-    }
-  }, [selection.index, products, total]);
 
   return (
     <section className="hero" aria-roledescription="carousel" aria-label="Featured collection">

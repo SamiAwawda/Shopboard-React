@@ -8,7 +8,6 @@ export const SOCIAL_LINKS: SocialLink[] = [
 ];
 
 // Animation numbers of the hero (pixels move, seconds last). `still()` turns them to 0 for reduced motion.
-export const NEIGHBOUR_OFFSETS = [1, -1];
 export const COPY_ENTER_Y = 10;
 export const COPY_EXIT_Y = -8;
 export const COPY_FADE_SECONDS = 0.2;
