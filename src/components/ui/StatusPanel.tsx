@@ -1,25 +1,14 @@
 import "./status.css";
 
 interface StatusPanelProps {
-  kind: "loading" | "error" | "empty";
-  message: string;
-  onRetry?: () => void;
+  children: React.ReactNode;
 }
 
-// A full-width message for the loading, error and empty states (error has a retry button).
-export default function StatusPanel({
-  kind,
-  message,
-  onRetry,
-}: StatusPanelProps): React.JSX.Element {
+// A full-width message: loading, empty or not found. Screen readers announce it when it appears.
+export default function StatusPanel({ children }: StatusPanelProps): React.JSX.Element {
   return (
-    <div className="status-panel" role={kind === "error" ? "alert" : "status"}>
-      <p>{message}</p>
-      {kind === "error" && onRetry && (
-        <button type="button" className="solid-button" onClick={onRetry}>
-          Try again
-        </button>
-      )}
+    <div className="status-panel" role="status">
+      {children}
     </div>
   );
 }

@@ -1,4 +1,52 @@
-/* Cart popup contents. Mobile-first. */
+/* Cart: the add and buy buttons, the cart page, the order summary and the empty message. Mobile-first. */
+
+/* The small bag button on a product card */
+.add-button {
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+  transition: background var(--duration-fast);
+}
+
+.add-button:hover {
+  background: var(--accent-border);
+}
+
+/* The big "Buy now" button (hero and product page) */
+.buy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-width: 155px;
+  min-height: 44px;
+  padding: 0 25px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-button);
+  color: var(--accent-deep);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition:
+    transform var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+
+.buy-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.buy-button:active {
+  transform: translateY(0);
+}
+
+/* The cart page */
+.cart-view {
+  max-width: 720px;
+}
+
 .cart-items {
   margin: 0;
   padding: 8px 0;
@@ -34,7 +82,7 @@
   min-width: 0;
 }
 
-.cart-item-info h3 {
+.cart-item-info h2 {
   margin-bottom: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -108,7 +156,49 @@
   color: var(--ink-muted);
 }
 
+.cart-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+/* The checkout side panel */
+.order-summary {
+  padding: 24px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-cool);
+}
+
+.order-summary h2 {
+  margin-bottom: 14px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.order-summary ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+  font-size: 13px;
+}
+
+.order-summary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 @media (min-width: 481px) {
+  .buy-button {
+    min-width: 170px;
+    font-size: 10px;
+  }
+
   .cart-item {
     gap: 16px;
   }
@@ -118,8 +208,25 @@
     height: 95px;
   }
 
-  .cart-item-info h3 {
+  .cart-item-info h2 {
     font-size: 13px;
+  }
+}
+
+@media (min-width: 761px) {
+  .buy-button {
+    min-width: 175px;
+    min-height: 45px;
+    gap: 20px;
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 1051px) {
+  .buy-button {
+    min-width: 210px;
+    min-height: 50px;
+    font-size: 12px;
   }
 }
 
@@ -133,7 +240,7 @@
   color: var(--accent);
 }
 
-.empty-state h3 {
+.empty-state h2 {
   margin-top: 20px;
   font-size: 17px;
   font-weight: 550;

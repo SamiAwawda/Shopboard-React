@@ -1,33 +1,13 @@
-// Hook that loads the products from the API.
-import { useCallback, useEffect, useState } from "react";
-import type { ApiState } from "../../shared/api/client";
-import { fetchProducts } from "./api";
+// Hooks that read the products for Suspense: while the request runs, the nearest <Suspense>
+// shows its fallback; if it fails, the nearest error boundary shows the error.
+import { use } from "react";
+import { loadProduct, loadProducts } from "./api";
 import type { Product } from "./types";
 
-interface UseProducts {
-  state: ApiState<Product[]>;
-  reload: () => void;
+export function useProducts(): Product[] {
+  return use(loadProducts());
 }
 
-// Loads the products from the API when the page opens. `reload` tries again (after an error).
-export function useProducts(): UseProducts {
-  const [state, setState] = useState<ApiState<Product[]>>({ status: "loading" });
-  const [attempt, setAttempt] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchProducts().then((result) => {
-      if (!cancelled) setState(result);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [attempt]);
-
-  const reload = useCallback((): void => {
-    setState({ status: "loading" });
-    setAttempt((count) => count + 1);
-  }, []);
-
-  return { state, reload };
+export function useProduct(id: number): Product | null {
+  return use(loadProduct(id));
 }

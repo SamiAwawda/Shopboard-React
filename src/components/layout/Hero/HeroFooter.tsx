@@ -1,18 +1,20 @@
+import { Link } from "react-router";
 import Icon from "../../ui/Icon";
-import { THUMBNAILS_PER_PAGE, pad2, pageCount } from "./logic";
+import { pad2, pageLeaders } from "./logic";
 import { SOCIAL_LINKS } from "./data";
+import type { HeroProduct } from "./types";
 
 interface HeroFooterProps {
+  products: HeroProduct[];
   index: number;
-  total: number;
   page: number;
   onSelect: (index: number) => void;
 }
 
-// The bottom of the hero: social links, the "01 / 12" counter, page dots and the link to the list.
+// The bottom of the hero: social links, the "01 / 12" counter, page dots and the link to the shop.
 export default function HeroFooter({
+  products,
   index,
-  total,
   page,
   onSelect,
 }: HeroFooterProps): React.JSX.Element {
@@ -35,24 +37,24 @@ export default function HeroFooter({
         <span className="slide-counter">
           <strong>{pad2(index + 1)}</strong>
           <span>/</span>
-          {pad2(total)}
+          {pad2(products.length)}
         </span>
         <span className="pager-divider" />
         <div className="page-dots" role="group" aria-label="Collection pages">
-          {Array.from({ length: pageCount(total) }, (_, dot) => (
+          {pageLeaders(products).map((leader, dot) => (
             <button
               type="button"
-              key={dot}
+              key={leader.id}
               className={dot === page ? "selected" : ""}
               aria-label={`View collection page ${dot + 1}`}
               aria-pressed={dot === page}
-              onClick={() => onSelect(dot * THUMBNAILS_PER_PAGE)}
+              onClick={() => onSelect(products.indexOf(leader))}
             />
           ))}
         </div>
-        <a className="view-collection" href="#shop">
+        <Link className="view-collection" to="/shop">
           View collection <Icon name="arrow" size={13} />
-        </a>
+        </Link>
       </div>
     </div>
   );

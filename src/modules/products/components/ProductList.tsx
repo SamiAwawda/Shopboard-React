@@ -8,11 +8,16 @@ import "../products.css";
 
 interface ProductListProps {
   products: Product[];
-  onAdd: (id: number) => void;
+  // The add-to-cart control of one card. The page decides what it does.
+  renderAction: (product: Product) => React.ReactNode;
 }
 
-// The product list with simple filters on top: search, category buttons and a price sort.
-export default function ProductList({ products, onAdd }: ProductListProps): React.JSX.Element {
+// The product grid with simple filters on top: search, category buttons and a price sort.
+// The filters are only needed here, so their state lives here. The visible list is worked out on each render.
+export default function ProductList({
+  products,
+  renderAction,
+}: ProductListProps): React.JSX.Element {
   const [text, setText] = useState("");
   const [category, setCategory] = useState(ALL_CATEGORIES);
   const [direction, setDirection] = useState<SortDirection>(DEFAULT_SORT);
@@ -20,8 +25,7 @@ export default function ProductList({ products, onAdd }: ProductListProps): Reac
   const visible = sortByPrice(filterProducts(products, text, category), direction);
 
   return (
-    <section className="product-list" id="shop" aria-labelledby="shop-title">
-      <h2 id="shop-title">The everyday edit</h2>
+    <>
       <div className="filters">
         <label className="search-field">
           <Icon name="search" size={20} />
@@ -68,11 +72,11 @@ export default function ProductList({ products, onAdd }: ProductListProps): Reac
         <ul className="product-grid">
           {visible.map((product) => (
             <li key={product.id}>
-              <ProductCard product={product} onAdd={onAdd} />
+              <ProductCard product={product}>{renderAction(product)}</ProductCard>
             </li>
           ))}
         </ul>
       )}
-    </section>
+    </>
   );
 }

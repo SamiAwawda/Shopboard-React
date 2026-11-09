@@ -98,9 +98,6 @@ export default function ThumbnailSelector({
                     <span>{item.name}</span>
                     <span className="thumbnail-prices">
                       <strong>{formatPrice(item.priceCents)}</strong>
-                      {item.originalPriceCents !== null && (
-                        <s>{formatPrice(item.originalPriceCents)}</s>
-                      )}
                     </span>
                   </motion.span>
                 )}

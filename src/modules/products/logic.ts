@@ -1,5 +1,4 @@
-// Products logic: pure functions to name, search, filter and sort products.
-import type { ApiState } from "../../shared/api/client";
+// Products logic: pure functions to name, read, search, filter and sort products.
 import type { Product, SortDirection } from "./types";
 import { ALL_CATEGORIES, DEFAULT_SORT, SORT_DIRECTIONS } from "./data";
 
@@ -10,6 +9,12 @@ export function slugify(title: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+// The product id from the address ("/products/3" -> 3). Anything that is not a whole number above 0 gives null.
+export function parseProductId(text: string | undefined): number | null {
+  const id = Number(text);
+  return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 // Checks that a select's text is one of the three sort directions.
@@ -38,18 +43,4 @@ export function sortByPrice(products: Product[], direction: SortDirection): Prod
 // "All" first, then every category once, in the order they first appear.
 export function categoryNames(products: Product[]): string[] {
   return [ALL_CATEGORIES, ...new Set(products.map((product) => product.category))];
-}
-
-// The text for the loading, error and empty states of the products request.
-export function statusMessage(state: ApiState<Product[]>): string {
-  switch (state.status) {
-    case "loading":
-      return "Loading products…";
-    case "empty":
-      return "There are no products yet.";
-    case "error":
-      return `Could not load the products. ${state.message}.`;
-    case "success":
-      return "";
-  }
 }

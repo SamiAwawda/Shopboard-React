@@ -1,28 +1,28 @@
 // The ShopBoard API client: the only file that calls fetch and knows the API address.
+// To try the loading, error and empty states, put /delay/3000, /fail/500 or /empty after the host.
 export const BASE_URL = "https://shopboard-api.vercel.app";
 
-// Every request is in exactly one of these four states.
-export type ApiState<T> =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "empty" }
-  | { status: "success"; data: T };
+// A reply with an HTTP error status. `status` lets a caller treat 404 as "not found".
+export class ApiError extends Error {
+  readonly status: number;
 
-// Loads a path and checks the reply with a type guard. Never throws: failures become an "error" state.
-async function load<T>(
-  path: string,
-  isReply: (value: unknown) => value is T,
-  isEmpty: (data: T) => boolean,
-): Promise<ApiState<T>> {
-  try {
-    const res = await fetch(`${BASE_URL}${path}`);
-    if (!res.ok) return { status: "error", message: `HTTP ${res.status}` };
-    const data: unknown = await res.json();
-    if (!isReply(data)) return { status: "error", message: "Unexpected reply from the server" };
-    return isEmpty(data) ? { status: "empty" } : { status: "success", data };
-  } catch {
-    return { status: "error", message: "Network error" };
+  constructor(status: number) {
+    super(`HTTP ${status}`);
+    this.status = status;
   }
 }
 
-export const api = { load };
+// Loads a path and checks the reply with a type guard. It throws on a network error, an HTTP
+// error or an unexpected reply, so the nearest error boundary shows the problem.
+export async function getJson<T>(
+  path: string,
+  isReply: (value: unknown) => value is T,
+): Promise<T> {
+  const response = await fetch(`${BASE_URL}${path}`).catch((): never => {
+    throw new Error("Network error");
+  });
+  if (!response.ok) throw new ApiError(response.status);
+  const data: unknown = await response.json().catch(() => undefined);
+  if (!isReply(data)) throw new Error("Unexpected reply from the server");
+  return data;
+}

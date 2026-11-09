@@ -1,4 +1,4 @@
-/* Header: logo, section links and the cart button. */
+/* Header: logo, page links and the cart link. */
 .header {
   display: flex;
   flex-wrap: wrap;
@@ -61,6 +61,7 @@
   align-self: flex-start;
   margin: -4px -2px 0 0;
   color: var(--ink-muted);
+  text-decoration: none;
   transition: background var(--duration-fast);
 }
 
@@ -136,12 +137,12 @@
     font-size: 11px;
   }
 
-  .nav-link:first-child {
+  .nav-link[aria-current="page"] {
     color: var(--accent-deep);
     font-weight: 700;
   }
 
-  .nav-link:first-child::after {
+  .nav-link[aria-current="page"]::after {
     content: "";
     position: absolute;
     right: 0;

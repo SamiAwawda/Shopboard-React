@@ -9,14 +9,15 @@ import { NEIGHBOUR_OFFSETS } from "./data";
 import type { HeroProduct, Selection } from "./types";
 import "./hero.css";
 
-interface HeroProps {
-  products: HeroProduct[];
-  canAdd: (id: number) => boolean;
-  onAdd: (id: number) => void;
+// Generic, so `renderAction` gets back the page's own product type (with all its fields).
+interface HeroProps<T extends HeroProduct> {
+  products: T[];
+  // The buy control of the featured product. The page decides what it does.
+  renderAction: (product: T) => React.ReactNode;
 }
 
-interface CarouselProps extends HeroProps {
-  first: HeroProduct;
+interface CarouselProps<T extends HeroProduct> extends HeroProps<T> {
+  first: T;
 }
 
 // The white lines in the background never change, so the element is built once.
@@ -35,14 +36,21 @@ const LINEWORK = (
 );
 
 // Shows the carousel once there is at least one product (the first one is the fallback for lookups).
-export default function Hero({ products, canAdd, onAdd }: HeroProps): React.JSX.Element | null {
+export default function Hero<T extends HeroProduct>({
+  products,
+  renderAction,
+}: HeroProps<T>): React.JSX.Element | null {
   const first = products[0];
   if (!first) return null;
-  return <Carousel products={products} first={first} canAdd={canAdd} onAdd={onAdd} />;
+  return <Carousel products={products} first={first} renderAction={renderAction} />;
 }
 
 // The hero: owns which product is selected and puts the parts together.
-function Carousel({ products, first, canAdd, onAdd }: CarouselProps): React.JSX.Element {
+function Carousel<T extends HeroProduct>({
+  products,
+  first,
+  renderAction,
+}: CarouselProps<T>): React.JSX.Element {
   const [selection, setSelection] = useState<Selection>({ index: 0, direction: 1 });
   const total = products.length;
   const product = products[selection.index] ?? first;
@@ -93,7 +101,7 @@ function Carousel({ products, first, canAdd, onAdd }: CarouselProps): React.JSX.
       <div className="hero-background" aria-hidden="true" />
       {LINEWORK}
       <div className="hero-inner">
-        <HeroCopy product={product} canAdd={canAdd} onAdd={onAdd} />
+        <HeroCopy product={product}>{renderAction(product)}</HeroCopy>
         <ProductStage product={product} direction={selection.direction} onStep={step} />
         <ThumbnailSelector
           products={products}
@@ -101,7 +109,7 @@ function Carousel({ products, first, canAdd, onAdd }: CarouselProps): React.JSX.
           selectedId={product.id}
           onSelect={select}
         />
-        <HeroFooter index={selection.index} total={total} page={page} onSelect={select} />
+        <HeroFooter products={products} index={selection.index} page={page} onSelect={select} />
         <p className="sr-only" role="status" aria-live="polite">
           {product.name}, {formatPrice(product.priceCents)}, product {selection.index + 1} of{" "}
           {total}.

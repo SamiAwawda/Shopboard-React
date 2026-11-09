@@ -18,19 +18,12 @@ export function pageProducts(products: HeroProduct[], page: number): HeroProduct
   return products.slice(page * THUMBNAILS_PER_PAGE, (page + 1) * THUMBNAILS_PER_PAGE);
 }
 
-// How many pages of thumbnails the list needs.
-export function pageCount(length: number): number {
-  return Math.ceil(length / THUMBNAILS_PER_PAGE);
+// The first product of every page: one page dot each (its id is the dot's key).
+export function pageLeaders(products: HeroProduct[]): HeroProduct[] {
+  return products.filter((_, index) => index % THUMBNAILS_PER_PAGE === 0);
 }
 
 // Two digits, like "01": the slide counter.
 export function pad2(value: number): string {
   return String(value).padStart(2, "0");
-}
-
-// The text of the buy button, from the product's state.
-export function getBuyLabel(inStock: boolean, canBuy: boolean, justAdded: boolean): string {
-  if (!inStock) return "Sold out";
-  if (!canBuy) return "Cart limit reached";
-  return justAdded ? "Added to cart" : "Buy now";
 }

@@ -5,7 +5,6 @@ export interface Product {
   category: string;
   priceCents: number;
   inStock: boolean;
-  originalPriceCents: number | null;
   description: string;
   accent: string;
   imageScale: number;
@@ -16,9 +15,8 @@ export interface Product {
 
 export type SortDirection = "default" | "asc" | "desc";
 
-// What the design adds to a product the API describes: text, old price, colors and photos.
+// What the design adds to a product the API describes: text, color and photo size.
 export interface ProductLook {
-  originalPriceCents: number | null;
   description: string;
   accent: string;
   imageScale: number;

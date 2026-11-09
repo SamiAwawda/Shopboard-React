@@ -1,16 +1,16 @@
+import { Link, NavLink } from "react-router";
 import Icon from "../ui/Icon";
 import "./header.css";
 
 interface HeaderLink {
   label: string;
-  href: string;
+  to: string;
 }
 
 interface HeaderProps {
   title: string;
   links: HeaderLink[];
   cartCount: number;
-  onCartClick: () => void;
 }
 
 // The logo mark never changes, so the element is built once.
@@ -27,35 +27,25 @@ const STORE_MARK = (
   </svg>
 );
 
-// The page header: logo + title, section links, and the cart button with its badge.
-export default function Header({
-  title,
-  links,
-  cartCount,
-  onCartClick,
-}: HeaderProps): React.JSX.Element {
+// The page header: logo + title, page links (the current one is marked), and the cart link with its badge.
+export default function Header({ title, links, cartCount }: HeaderProps): React.JSX.Element {
   return (
     <header className="header">
-      <a className="wordmark" href="#home" aria-label={`${title} home`}>
+      <Link className="wordmark" to="/" aria-label={`${title} home`}>
         {STORE_MARK}
         <span>{title}</span>
-      </a>
+      </Link>
       <nav className="navigation" aria-label="Main navigation">
         {links.map((link) => (
-          <a key={link.href} className="nav-link" href={link.href}>
+          <NavLink key={link.to} className="nav-link" to={link.to} end>
             {link.label}
-          </a>
+          </NavLink>
         ))}
       </nav>
-      <button
-        type="button"
-        className="icon-button cart-button"
-        aria-label={`Open cart, ${cartCount} items`}
-        onClick={onCartClick}
-      >
+      <Link className="icon-button cart-button" to="/cart" aria-label={`Cart, ${cartCount} items`}>
         <Icon name="cart" size={28} />
         {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
-      </button>
+      </Link>
     </header>
   );
 }

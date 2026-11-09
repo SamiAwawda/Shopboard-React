@@ -1,17 +1,16 @@
 import { AnimatePresence, motion } from "motion/react";
-import BuyButton from "./BuyButton";
 import { COPY_ENTER_Y, COPY_EXIT_Y, COPY_FADE_SECONDS } from "./data";
 import type { HeroProduct } from "./types";
 import { useStill } from "./useStill";
 
 interface HeroCopyProps {
   product: HeroProduct;
-  canAdd: (id: number) => boolean;
-  onAdd: (id: number) => void;
+  // The buy control under the description.
+  children: React.ReactNode;
 }
 
-// The left side of the hero: title, the product's description (fades on change) and the buy button.
-export default function HeroCopy({ product, canAdd, onAdd }: HeroCopyProps): React.JSX.Element {
+// The left side of the hero: title, the product's description (fades on change) and the buy control.
+export default function HeroCopy({ product, children }: HeroCopyProps): React.JSX.Element {
   const { still } = useStill();
 
   return (
@@ -35,7 +34,7 @@ export default function HeroCopy({ product, canAdd, onAdd }: HeroCopyProps): Rea
           </motion.p>
         </AnimatePresence>
       </div>
-      <BuyButton product={product} canAdd={canAdd} onAdd={onAdd} />
+      {children}
     </div>
   );
 }

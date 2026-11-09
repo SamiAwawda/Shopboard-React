@@ -1,10 +1,12 @@
-// Products API: the path, the check of the reply, and API names -> the app's Product (one mapper).
-import { api, type ApiState } from "../../shared/api/client";
+// Products API: the paths, the checks of the reply, API names -> the app's Product (one mapper),
+// and the request cache that Suspense reads with `use()`.
+import { ApiError, getJson } from "../../shared/api/client";
 import { DEFAULT_LOOK, IMAGE_FOLDER, PLACEHOLDER_IMAGE, PRODUCT_LOOKS } from "./data";
 import { slugify } from "./logic";
 import type { Product } from "./types";
 
 const PRODUCTS_PATH = "/api/products";
+const NOT_FOUND = 404;
 
 interface ApiProduct {
   id: number;
@@ -47,7 +49,7 @@ function isProductsReply(value: unknown): value is ProductsReply {
   );
 }
 
-// Merges one API product with the design's look. The old price shows only when it is higher.
+// Merges one API product with the design's look.
 function toProduct(item: ApiProduct): Product {
   const slug = slugify(item.title);
   const knownLook = PRODUCT_LOOKS[slug];
@@ -55,14 +57,12 @@ function toProduct(item: ApiProduct): Product {
   // The photos exist only for products the design knows.
   const photo = (size: "hero" | "card" | "thumb"): string =>
     knownLook ? `${IMAGE_FOLDER}/${slug}-${size}.webp` : PLACEHOLDER_IMAGE;
-  const hasSale = look.originalPriceCents !== null && look.originalPriceCents > item.price_cents;
   return {
     id: item.id,
     name: item.title,
     category: item.category_name,
     priceCents: item.price_cents,
     inStock: item.in_stock,
-    originalPriceCents: hasSale ? look.originalPriceCents : null,
     description: look.description,
     accent: look.accent,
     imageScale: look.imageScale,
@@ -72,10 +72,35 @@ function toProduct(item: ApiProduct): Product {
   };
 }
 
-// Loads the products. Never throws: the result is one of the four ApiState values.
-export async function fetchProducts(): Promise<ApiState<Product[]>> {
-  const state = await api.load(PRODUCTS_PATH, isProductsReply, (reply) => reply.items.length === 0);
-  return state.status === "success"
-    ? { status: "success", data: state.data.items.map(toProduct) }
-    : state;
+// `use()` needs the same promise on every render, so each request is made once and kept here.
+let productsRequest: Promise<Product[]> | null = null;
+const productRequests = new Map<number, Promise<Product | null>>();
+
+// All products. The promise rejects on any error, and the error boundary shows it.
+export function loadProducts(): Promise<Product[]> {
+  productsRequest ??= getJson(PRODUCTS_PATH, isProductsReply).then((reply) =>
+    reply.items.map(toProduct),
+  );
+  return productsRequest;
+}
+
+// One product by its id. `null` when the API has no product with this id.
+export function loadProduct(id: number): Promise<Product | null> {
+  const saved = productRequests.get(id);
+  if (saved) return saved;
+  const request = getJson(`${PRODUCTS_PATH}/${id}`, isApiProduct).then(
+    toProduct,
+    (error: unknown) => {
+      if (error instanceof ApiError && error.status === NOT_FOUND) return null;
+      throw error;
+    },
+  );
+  productRequests.set(id, request);
+  return request;
+}
+
+// Drops the saved requests, so "Try again" asks the API again.
+export function forgetProductRequests(): void {
+  productsRequest = null;
+  productRequests.clear();
 }

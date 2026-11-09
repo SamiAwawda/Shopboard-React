@@ -2,7 +2,6 @@
 export type IconName =
   | "arrow"
   | "arrowLeft"
-  | "close"
   | "cart"
   | "bag"
   | "search"
@@ -23,7 +22,6 @@ const DEFAULT_SIZE = 24;
 const PATHS: Record<IconName, React.ReactNode> = {
   arrow: <path d="m9 5 7 7-7 7" />,
   arrowLeft: <path d="m15 5-7 7 7 7" />,
-  close: <path d="m6 6 12 12M6 18 18 6" />,
   cart: (
     <>
       <path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 8H6" />
